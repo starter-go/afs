@@ -1,10 +1,13 @@
 package support
 
 import (
+	"bytes"
+	"io"
 	"os"
 	"strings"
 
 	"bitwormhole.com/starter/afs"
+	"bitwormhole.com/starter/base/util"
 )
 
 type myCommonPath struct {
@@ -28,6 +31,18 @@ func (inst *myCommonPath) GetParent() afs.Path {
 func (inst *myCommonPath) GetChild(name string) afs.Path {
 	path := inst.path
 	return inst.GetFS().NewPath(path + "/" + name)
+}
+
+func (inst *myCommonPath) Exists() bool {
+	return inst.GetInfo().Exists()
+}
+
+func (inst *myCommonPath) IsDirectory() bool {
+	return inst.GetInfo().IsDirectory()
+}
+
+func (inst *myCommonPath) IsFile() bool {
+	return inst.GetInfo().IsFile()
 }
 
 func (inst *myCommonPath) String() string {
@@ -88,6 +103,32 @@ func (inst *myCommonPath) Mkdirs(op afs.Options) error {
 
 func (inst *myCommonPath) Delete() error {
 	return os.Remove(inst.path)
+}
+
+func (inst *myCommonPath) Create(op afs.Options) error {
+	return inst.CreateWithSource(nil, op)
+}
+
+func (inst *myCommonPath) CreateWithData(data []byte, op afs.Options) error {
+	mem := &bytes.Buffer{}
+	if data != nil {
+		mem.Write(data)
+	}
+	return inst.CreateWithSource(mem, op)
+}
+
+func (inst *myCommonPath) CreateWithSource(src io.Reader, op afs.Options) error {
+	if src == nil {
+		data := []byte{}
+		src = bytes.NewReader(data)
+	}
+	dst, err := inst.GetIO().OpenWriter(op)
+	if err != nil {
+		return err
+	}
+	defer util.Close(dst)
+	_, err = util.PumpStream(src, dst, nil)
+	return err
 }
 
 func (inst *myCommonPath) ListNames() []string {

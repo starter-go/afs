@@ -1,6 +1,9 @@
 package afs
 
-import "io/fs"
+import (
+	"io"
+	"io/fs"
+)
 
 // Options ...
 type Options struct {
@@ -10,4 +13,8 @@ type Options struct {
 // FileIO ...
 type FileIO interface {
 	Path() Path
+
+	OpenReader(op Options) (io.ReadCloser, error)
+
+	OpenWriter(op Options) (io.WriteCloser, error)
 }

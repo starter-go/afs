@@ -6,13 +6,11 @@ import (
 
 // GetPosixFS ...
 func GetPosixFS() afs.FS {
-
 	ctx := &myFSContext{}
 	ctx.shell = &myShellFS{context: ctx}
 	ctx.common = &CommonFileSystemCore{context: ctx}
 	ctx.platform = &myPosixFS{context: ctx}
 	return ctx.shell
-
 }
 
 // core

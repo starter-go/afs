@@ -1,14 +1,17 @@
 package afs
 
+import "io"
+
 // Path 是表示绝对路径的接口
 type Path interface {
-	GetFS() FS
 
-	GetParent() Path
+	// 属性
 
-	GetChild(name string) Path
+	Exists() bool
 
-	String() string
+	IsFile() bool
+
+	IsDirectory() bool
 
 	GetName() string
 
@@ -16,7 +19,25 @@ type Path interface {
 
 	GetInfo() FileInfo
 
-	GetIO() FileIO
+	String() string
+
+	// 导航
+
+	GetFS() FS
+
+	GetParent() Path
+
+	GetChild(name string) Path
+
+	// 查询
+
+	ListNames() []string
+
+	ListPaths() []string
+
+	ListChildren() []Path
+
+	// 操作
 
 	Mkdir(op Options) error
 
@@ -24,9 +45,13 @@ type Path interface {
 
 	Delete() error
 
-	ListNames() []string
+	Create(op Options) error
 
-	ListPaths() []string
+	CreateWithData(data []byte, op Options) error
 
-	ListChildren() []Path
+	CreateWithSource(src io.Reader, op Options) error
+
+	// 读写
+
+	GetIO() FileIO
 }
