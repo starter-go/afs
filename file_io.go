@@ -8,13 +8,25 @@ import (
 // Options ...
 type Options struct {
 	Permission fs.FileMode
+
+	Mkdirs bool
+
+	Create bool
 }
 
 // FileIO ...
 type FileIO interface {
 	Path() Path
 
-	OpenReader(op Options) (io.ReadCloser, error)
+	OpenReader(opt *Options) (io.ReadCloser, error)
 
-	OpenWriter(op Options) (io.WriteCloser, error)
+	OpenWriter(opt *Options) (io.WriteCloser, error)
+
+	WriteText(text string, opt *Options) error
+
+	WriteBinary(b []byte, opt *Options) error
+
+	ReadText(opt *Options) (string, error)
+
+	ReadBinary(opt *Options) ([]byte, error)
 }

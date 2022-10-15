@@ -91,12 +91,18 @@ func (inst *myCommonPath) GetIO() afs.FileIO {
 	return &myCommonFileIO{path: inst}
 }
 
-func (inst *myCommonPath) Mkdir(op afs.Options) error {
+func (inst *myCommonPath) Mkdir(op *afs.Options) error {
+	if op == nil {
+		op = &afs.Options{}
+	}
 	path := inst.path
 	return os.Mkdir(path, op.Permission)
 }
 
-func (inst *myCommonPath) Mkdirs(op afs.Options) error {
+func (inst *myCommonPath) Mkdirs(op *afs.Options) error {
+	if op == nil {
+		op = &afs.Options{}
+	}
 	path := inst.path
 	return os.MkdirAll(path, op.Permission)
 }
@@ -105,11 +111,11 @@ func (inst *myCommonPath) Delete() error {
 	return os.Remove(inst.path)
 }
 
-func (inst *myCommonPath) Create(op afs.Options) error {
+func (inst *myCommonPath) Create(op *afs.Options) error {
 	return inst.CreateWithSource(nil, op)
 }
 
-func (inst *myCommonPath) CreateWithData(data []byte, op afs.Options) error {
+func (inst *myCommonPath) CreateWithData(data []byte, op *afs.Options) error {
 	mem := &bytes.Buffer{}
 	if data != nil {
 		mem.Write(data)
@@ -117,7 +123,7 @@ func (inst *myCommonPath) CreateWithData(data []byte, op afs.Options) error {
 	return inst.CreateWithSource(mem, op)
 }
 
-func (inst *myCommonPath) CreateWithSource(src io.Reader, op afs.Options) error {
+func (inst *myCommonPath) CreateWithSource(src io.Reader, op *afs.Options) error {
 	if src == nil {
 		data := []byte{}
 		src = bytes.NewReader(data)

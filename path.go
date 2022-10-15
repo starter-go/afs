@@ -39,17 +39,17 @@ type Path interface {
 
 	// 操作
 
-	Mkdir(op Options) error
+	Mkdir(opt *Options) error
 
-	Mkdirs(op Options) error
+	Mkdirs(opt *Options) error
 
 	Delete() error
 
-	Create(op Options) error
+	Create(opt *Options) error
 
-	CreateWithData(data []byte, op Options) error
+	CreateWithData(data []byte, opt *Options) error
 
-	CreateWithSource(src io.Reader, op Options) error
+	CreateWithSource(src io.Reader, opt *Options) error
 
 	// 读写
 

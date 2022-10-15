@@ -44,7 +44,7 @@ func TestDirPathInfo(t *testing.T) {
 	logFileInfo(info, t)
 
 	if !info.Exists() {
-		err := dir1.Mkdirs(afs.Options{})
+		err := dir1.Mkdirs(&afs.Options{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -65,7 +65,7 @@ func TestFilePathInfo(t *testing.T) {
 
 	if !info.Exists() {
 		data := []byte("hello, afs file")
-		err := file1.CreateWithData(data, afs.Options{})
+		err := file1.CreateWithData(data, &afs.Options{})
 		if err != nil {
 			t.Error(err)
 		}
