@@ -25,6 +25,9 @@ func (inst *myCommonPath) GetFS() afs.FS {
 
 func (inst *myCommonPath) GetParent() afs.Path {
 	path := inst.path
+	if path == "" || path == "/" {
+		return nil
+	}
 	return inst.GetFS().NewPath(path + "/..")
 }
 

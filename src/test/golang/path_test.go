@@ -75,3 +75,22 @@ func TestFilePathInfo(t *testing.T) {
 	logFileInfo(info, t)
 
 }
+
+func TestGetParent(t *testing.T) {
+	tmp := t.TempDir()
+	fs1 := files.FS()
+	dir1 := fs1.NewPath(tmp + "/dir1")
+	p := dir1
+	timeout := 99
+	for ; timeout > 0; timeout-- {
+		if p == nil {
+			break
+		}
+		t.Log("current path = ", p.GetPath())
+		p = p.GetParent()
+	}
+	if p == nil {
+		return
+	}
+	t.Error("timeout")
+}
