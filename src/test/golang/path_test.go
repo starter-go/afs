@@ -65,7 +65,7 @@ func TestFilePathInfo(t *testing.T) {
 
 	if !info.Exists() {
 		data := []byte("hello, afs file")
-		err := file1.CreateWithData(data, &afs.Options{})
+		err := file1.CreateWithData(data, &afs.Options{Create: true})
 		if err != nil {
 			t.Error(err)
 		}

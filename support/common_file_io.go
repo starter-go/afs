@@ -3,6 +3,7 @@ package support
 import (
 	"errors"
 	"io"
+	"io/fs"
 	"os"
 	"strconv"
 
@@ -23,20 +24,13 @@ func (inst *myCommonFileIO) Path() afs.Path {
 }
 
 func (inst *myCommonFileIO) OpenReader(op *afs.Options) (io.ReadCloser, error) {
-
-	if op == nil {
-		op = &afs.Options{}
-	}
-
+	op = inst.prepareOptionsForRead(op)
 	path := inst.path.GetPath()
-	flag := os.O_RDONLY
-	return os.OpenFile(path, flag, op.Permission)
+	return os.OpenFile(path, op.Flag, op.Permission)
 }
 
 func (inst *myCommonFileIO) OpenWriter(op *afs.Options) (io.WriteCloser, error) {
-	if op == nil {
-		op = &afs.Options{}
-	}
+	op = inst.prepareOptionsForWrite(op)
 	file := inst.path
 	path := file.GetPath()
 	if op.Mkdirs {
@@ -45,11 +39,16 @@ func (inst *myCommonFileIO) OpenWriter(op *afs.Options) (io.WriteCloser, error) 
 			dir.Mkdirs(op)
 		}
 	}
-	flag := os.O_CREATE | os.O_WRONLY
-	return os.OpenFile(path, flag, op.Permission)
+	if op.Create {
+		op.Flag |= os.O_CREATE
+	}
+	return os.OpenFile(path, op.Flag, op.Permission)
 }
 
 func (inst *myCommonFileIO) ReadBinary(op *afs.Options) ([]byte, error) {
+
+	op = inst.prepareOptionsForRead(op)
+
 	r, err := inst.OpenReader(op)
 	if err != nil {
 		return nil, err
@@ -62,6 +61,9 @@ func (inst *myCommonFileIO) ReadBinary(op *afs.Options) ([]byte, error) {
 }
 
 func (inst *myCommonFileIO) ReadText(op *afs.Options) (string, error) {
+
+	op = inst.prepareOptionsForRead(op)
+
 	data, err := inst.ReadBinary(op)
 	if err != nil {
 		return "", err
@@ -70,6 +72,8 @@ func (inst *myCommonFileIO) ReadText(op *afs.Options) (string, error) {
 }
 
 func (inst *myCommonFileIO) WriteBinary(b []byte, op *afs.Options) error {
+
+	op = inst.prepareOptionsForWrite(op)
 
 	if b == nil {
 		return errors.New("data buffer is nil")
@@ -100,6 +104,9 @@ func (inst *myCommonFileIO) WriteBinary(b []byte, op *afs.Options) error {
 }
 
 func (inst *myCommonFileIO) WriteText(text string, op *afs.Options) error {
+
+	op = inst.prepareOptionsForWrite(op)
+
 	data := []byte(text)
 	return inst.WriteBinary(data, op)
 }
@@ -109,4 +116,27 @@ func (inst *myCommonFileIO) logError(err error) {
 		return
 	}
 	vlog.Warn(err)
+}
+
+func (inst *myCommonFileIO) prepareOptionsForWrite(ops *afs.Options) *afs.Options {
+	if ops == nil {
+		ops = &afs.Options{}
+	}
+	if ops.Permission == 0 {
+		ops.Permission = fs.ModePerm
+	}
+	if ops.Flag == 0 {
+		ops.Flag = os.O_TRUNC | os.O_WRONLY
+	}
+	return ops
+}
+
+func (inst *myCommonFileIO) prepareOptionsForRead(ops *afs.Options) *afs.Options {
+	if ops == nil {
+		ops = &afs.Options{}
+	}
+	if ops.Flag == 0 {
+		ops.Flag = os.O_RDONLY
+	}
+	return ops
 }
