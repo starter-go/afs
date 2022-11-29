@@ -51,6 +51,10 @@ type Path interface {
 
 	CreateWithSource(src io.Reader, opt *Options) error
 
+	MoveTo(dst Path) error
+
+	CopyTo(dst Path, opt *Options) error
+
 	// 读写
 
 	GetIO() FileIO

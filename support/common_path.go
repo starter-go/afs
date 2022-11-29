@@ -2,6 +2,7 @@ package support
 
 import (
 	"bytes"
+	"fmt"
 	"io"
 	"os"
 	"strings"
@@ -171,4 +172,44 @@ func (inst *myCommonPath) ListChildren() []afs.Path {
 		dst = append(dst, child)
 	}
 	return dst
+}
+
+func (inst *myCommonPath) MoveTo(to afs.Path) error {
+	if to == nil {
+		return fmt.Errorf("param:to is nil")
+	}
+	dst := to.GetPath()
+	src := inst.GetPath()
+	if dst == src {
+		return nil
+	}
+	return os.Rename(src, dst)
+}
+
+func (inst *myCommonPath) CopyTo(to afs.Path, opt *afs.Options) error {
+
+	if to == nil {
+		return fmt.Errorf("param:to is nil")
+	}
+
+	p1 := to.GetPath()
+	p2 := inst.GetPath()
+	if p1 == p2 {
+		return nil
+	}
+
+	src, err := inst.GetIO().OpenReader(nil)
+	if err != nil {
+		return nil
+	}
+	defer func() { src.Close() }()
+
+	dst, err := to.GetIO().OpenWriter(opt)
+	if err != nil {
+		return nil
+	}
+	defer func() { dst.Close() }()
+
+	_, err = io.Copy(dst, src)
+	return err
 }

@@ -94,3 +94,67 @@ func TestGetParent(t *testing.T) {
 	}
 	t.Error("timeout")
 }
+
+func TestCopyTo(t *testing.T) {
+
+	const text1 = "lsptu9a7ur0cyw4tiarnq03rnc0q2rq"
+
+	tmp := files.FS().NewPath(t.TempDir())
+	file1 := tmp.GetChild("f1.txt")
+	file2 := tmp.GetChild("a/b/c/f2.txt")
+
+	err := file1.GetIO().WriteText(text1, &afs.Options{Create: true})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	err = file1.CopyTo(file2, &afs.Options{Mkdirs: true, Create: true})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	text2, err := file2.GetIO().ReadText(nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if text1 != text2 {
+		t.Errorf("bad input & output text, want:%v have:%v", text1, text2)
+	}
+}
+
+func TestMoveTo(t *testing.T) {
+
+	const text1 = "arnq03rnc0q2rqlsptu9a7ur0cyw4ti"
+
+	tmp := files.FS().NewPath(t.TempDir())
+	file1 := tmp.GetChild("f1.txt")
+	file2 := tmp.GetChild("a/b/c/f2.txt")
+
+	err := file1.GetIO().WriteText(text1, &afs.Options{Create: true})
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	file2.GetParent().Mkdirs(nil)
+
+	err = file1.MoveTo(file2)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	text2, err := file2.GetIO().ReadText(nil)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	if text1 != text2 {
+		t.Errorf("bad input & output text, want:%v have:%v", text1, text2)
+	}
+}
