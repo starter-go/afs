@@ -27,7 +27,7 @@ type FileIO interface {
 
 	OpenWriter(opt *Options) (io.WriteCloser, error)
 
-	OpenSeekerR(opt *Options) (ReadSeekCloser, error)
+	OpenSeekerR(opt *Options) (io.ReadSeekCloser, error)
 
 	OpenSeekerW(opt *Options) (WriteSeekCloser, error)
 

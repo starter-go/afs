@@ -53,3 +53,7 @@ func (inst *myShellFS) PathSeparator() string {
 func (inst *myShellFS) Separator() string {
 	return inst.context.platform.Separator()
 }
+
+func (inst *myShellFS) OpenReaderPool() afs.ReaderPool {
+	return nil
+}

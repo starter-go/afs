@@ -53,7 +53,7 @@ func (inst *myCommonFileIO) OpenWriter(op *afs.Options) (io.WriteCloser, error) 
 	return inst.openW(op)
 }
 
-func (inst *myCommonFileIO) OpenSeekerR(op *afs.Options) (afs.ReadSeekCloser, error) {
+func (inst *myCommonFileIO) OpenSeekerR(op *afs.Options) (io.ReadSeekCloser, error) {
 	return inst.openR(op)
 }
 

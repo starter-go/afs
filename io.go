@@ -2,11 +2,11 @@ package afs
 
 import "io"
 
-// ReadSeekCloser ...
-type ReadSeekCloser interface {
-	io.Closer
-	io.ReadSeeker
-}
+// // ReadSeekCloser ...
+// type ReadSeekCloser interface {
+// 	io.Closer
+// 	io.ReadSeeker
+// }
 
 // WriteSeekCloser ...
 type WriteSeekCloser interface {
