@@ -2,6 +2,6 @@ package afs
 
 const (
 	theModuleName     = "bitwormhole.com/starter/afs"
-	theModuleVersion  = "v0.0.3"
-	theModuleRevision = 3
+	theModuleVersion  = "v0.0.4"
+	theModuleRevision = 4
 )
