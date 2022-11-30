@@ -27,11 +27,21 @@ type FileIO interface {
 
 	OpenWriter(opt *Options) (io.WriteCloser, error)
 
-	WriteText(text string, opt *Options) error
+	OpenSeekerR(opt *Options) (ReadSeekCloser, error)
 
-	WriteBinary(b []byte, opt *Options) error
+	OpenSeekerW(opt *Options) (WriteSeekCloser, error)
+
+	OpenSeekerRW(opt *Options) (ReadWriteSeekCloser, error)
+
+	// text
 
 	ReadText(opt *Options) (string, error)
+
+	WriteText(text string, opt *Options) error
+
+	// binary
+
+	WriteBinary(b []byte, opt *Options) error
 
 	ReadBinary(opt *Options) ([]byte, error)
 }

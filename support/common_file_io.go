@@ -23,13 +23,13 @@ func (inst *myCommonFileIO) Path() afs.Path {
 	return inst.path
 }
 
-func (inst *myCommonFileIO) OpenReader(op *afs.Options) (io.ReadCloser, error) {
+func (inst *myCommonFileIO) openR(op *afs.Options) (*os.File, error) {
 	op = inst.prepareOptionsForRead(op)
 	path := inst.path.GetPath()
 	return os.OpenFile(path, op.Flag, op.Permission)
 }
 
-func (inst *myCommonFileIO) OpenWriter(op *afs.Options) (io.WriteCloser, error) {
+func (inst *myCommonFileIO) openW(op *afs.Options) (*os.File, error) {
 	op = inst.prepareOptionsForWrite(op)
 	file := inst.path
 	path := file.GetPath()
@@ -43,6 +43,26 @@ func (inst *myCommonFileIO) OpenWriter(op *afs.Options) (io.WriteCloser, error) 
 		op.Flag |= os.O_CREATE
 	}
 	return os.OpenFile(path, op.Flag, op.Permission)
+}
+
+func (inst *myCommonFileIO) OpenReader(op *afs.Options) (io.ReadCloser, error) {
+	return inst.openR(op)
+}
+
+func (inst *myCommonFileIO) OpenWriter(op *afs.Options) (io.WriteCloser, error) {
+	return inst.openW(op)
+}
+
+func (inst *myCommonFileIO) OpenSeekerR(op *afs.Options) (afs.ReadSeekCloser, error) {
+	return inst.openR(op)
+}
+
+func (inst *myCommonFileIO) OpenSeekerW(op *afs.Options) (afs.WriteSeekCloser, error) {
+	return inst.openW(op)
+}
+
+func (inst *myCommonFileIO) OpenSeekerRW(op *afs.Options) (afs.ReadWriteSeekCloser, error) {
+	return inst.openW(op)
 }
 
 func (inst *myCommonFileIO) ReadBinary(op *afs.Options) ([]byte, error) {
