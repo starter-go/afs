@@ -1,6 +1,7 @@
 package golang
 
 import (
+	"io/fs"
 	"testing"
 
 	"bitwormhole.com/starter/afs"
@@ -140,7 +141,9 @@ func TestMoveTo(t *testing.T) {
 		return
 	}
 
-	file2.GetParent().Mkdirs(nil)
+	file2.GetParent().Mkdirs(&afs.Options{
+		Permission: fs.ModePerm,
+	})
 
 	err = file1.MoveTo(file2)
 	if err != nil {
@@ -157,4 +160,23 @@ func TestMoveTo(t *testing.T) {
 	if text1 != text2 {
 		t.Errorf("bad input & output text, want:%v have:%v", text1, text2)
 	}
+}
+
+func TestRoot(t *testing.T) {
+
+	// root dir
+	path := files.FS().NewPath("////")
+	if path.IsDirectory() {
+		list := path.ListNames()
+		for _, name := range list {
+			t.Log("  find item: ", name)
+		}
+	}
+
+	// roots
+	roots := files.FS().ListRoots()
+	for _, root := range roots {
+		t.Log("  find root: ", root.GetPath())
+	}
+
 }
