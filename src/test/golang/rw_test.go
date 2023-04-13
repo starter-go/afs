@@ -2,6 +2,7 @@ package golang
 
 import (
 	"io"
+	"io/fs"
 	"os"
 	"strings"
 	"testing"
@@ -28,22 +29,32 @@ func TestTrunc(t *testing.T) {
 	}
 
 	tmp := t.TempDir()
-	name := "demo-for-test-"
+	name := "demo-for-test-x"
 	file := files.FS().NewPath(tmp).GetChild(name)
-	ops := &afs.Options{Create: true}
+	ops := &afs.Options{
+		Create:     true,
+		Mkdirs:     true,
+		Permission: fs.ModePerm,
+	}
 	size := len(versions)
 
-	ops.Flag = os.O_TRUNC
+	// ops.Flag = os.O_TRUNC
 
 	for i := size - 1; i > 0; i-- {
 		text1 := versions[i]
-		file.GetIO().WriteText(text1, ops)
+		err := file.GetIO().WriteText(text1, ops)
+		if err != nil {
+			t.Error(err)
+			break
+		}
 		text2, err := file.GetIO().ReadText(nil)
 		if err != nil {
 			t.Error(err)
+			break
 		}
 		if text1 != text2 {
 			t.Errorf("text1 != text2, want:[%v], have:[%v]", text1, text2)
+			break
 		}
 	}
 }
@@ -68,9 +79,14 @@ func TestSeekerRW(t *testing.T) {
 	tmp := t.TempDir()
 	name := "demo-for-test-"
 	file := files.FS().NewPath(tmp).GetChild(name)
-	ops := &afs.Options{Create: true}
+	ops := &afs.Options{
+		Create:     true,
+		Mkdirs:     true,
+		Flag:       os.O_RDWR,
+		Permission: fs.ModePerm,
+	}
 
-	ops.Flag = os.O_TRUNC
+	// ops.Flag = os.O_TRUNC
 
 	rw, err := file.GetIO().OpenSeekerRW(ops)
 	if err != nil {

@@ -39,6 +39,9 @@ func (inst *myPosixFS) NormalizePath(path string) (string, error) {
 		return "", err
 	}
 	path = comm.ElementsToPath(elements, sep, sep)
+	if path == "" {
+		path = "/"
+	}
 	return path, nil
 }
 
