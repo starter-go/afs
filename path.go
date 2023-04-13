@@ -51,7 +51,7 @@ type Path interface {
 
 	CreateWithSource(src io.Reader, opt *Options) error
 
-	MoveTo(dst Path) error
+	MoveTo(dst Path, opt *Options) error
 
 	CopyTo(dst Path, opt *Options) error
 

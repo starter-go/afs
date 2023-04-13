@@ -174,7 +174,7 @@ func (inst *myCommonPath) ListChildren() []afs.Path {
 	return dst
 }
 
-func (inst *myCommonPath) MoveTo(to afs.Path) error {
+func (inst *myCommonPath) MoveTo(to afs.Path, opt *afs.Options) error {
 	if to == nil {
 		return fmt.Errorf("param:to is nil")
 	}

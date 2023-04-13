@@ -142,7 +142,7 @@ func TestMoveTo(t *testing.T) {
 
 	file2.GetParent().Mkdirs(nil)
 
-	err = file1.MoveTo(file2)
+	err = file1.MoveTo(file2, nil)
 	if err != nil {
 		t.Error(err)
 		return
