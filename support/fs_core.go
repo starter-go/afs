@@ -2,6 +2,7 @@ package support
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"bitwormhole.com/starter/afs"
@@ -12,6 +13,8 @@ type CommonFileSystem interface {
 	PathToElements(path string) []string
 	ElementsToPath(elements []string, prefix string, sep string) string
 	NormalizePathElements(elements []string) ([]string, error)
+	PrepareOptions(path afs.Path, have, want *afs.Options) *afs.Options
+	SetDefaultOptionsHandler(fn afs.OptionsHandlerFunc) error
 }
 
 // PlatformFileSystem 各个平台独有的核心结构
@@ -74,4 +77,30 @@ func (inst *CommonFileSystemCore) NormalizePathElements(src []string) ([]string,
 		}
 	}
 	return dst, nil
+}
+
+func (inst *CommonFileSystemCore) PrepareOptions(path afs.Path, have, want *afs.Options) *afs.Options {
+	fn := inst.getDefaultOptionsHandler()
+	return fn(path.GetPath(), have, want)
+}
+
+func (inst *CommonFileSystemCore) SetDefaultOptionsHandler(h afs.OptionsHandlerFunc) error {
+	old := inst.context.optionsHandler
+	if old != nil {
+		return fmt.Errorf("an older handler has been configured")
+	}
+	if h == nil {
+		return fmt.Errorf("param:handler is nil")
+	}
+	inst.context.optionsHandler = h
+	return nil
+}
+
+func (inst *CommonFileSystemCore) getDefaultOptionsHandler() afs.OptionsHandlerFunc {
+	h := inst.context.optionsHandler
+	if h == nil {
+		h = (&defaultOptionsHandler{}).handle
+		inst.context.optionsHandler = h
+	}
+	return h
 }

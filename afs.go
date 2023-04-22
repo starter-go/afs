@@ -2,6 +2,9 @@ package afs
 
 import "errors"
 
+// OptionsHandlerFunc 函数用于为I/O操作准备选项
+type OptionsHandlerFunc func(path string, have, want *Options) *Options
+
 // FS 是表示文件系统的接口
 type FS interface {
 	NewPath(path string) Path
@@ -15,6 +18,9 @@ type FS interface {
 
 	// Separator return '/'(unix) | '\'(windows)
 	Separator() string
+
+	// 设置一个函数，用来处理默认的I/O选项
+	SetDefaultOptionsHandler(fn OptionsHandlerFunc) error
 }
 
 // FileSystemFactory 是用来创建 FS 对象的工厂
