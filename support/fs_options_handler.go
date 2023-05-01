@@ -9,25 +9,33 @@ import (
 
 type defaultOptionsHandler struct{}
 
-func (inst *defaultOptionsHandler) handle(path string, have, want *afs.Options) *afs.Options {
+func (inst *defaultOptionsHandler) handle(path string, have *afs.Options, want afs.WantOption) *afs.Options {
 
-	opt := have
-	if opt == nil {
-		opt = want
-	}
-	if opt == nil {
-		opt = &afs.Options{}
+	if have != nil {
+		return have
 	}
 
-	if opt.Write || opt.Create || opt.Mkdirs {
-		if opt.Permission == 0 && opt.Flag == 0 {
-			opt.Flag = os.O_RDWR | os.O_TRUNC
-			opt.Permission = fs.ModePerm
-		}
-		if opt.Create {
-			opt.Flag |= os.O_CREATE
-		}
+	// make new opt
+	have = &afs.Options{}
+
+	have.Mkdirs = (want & afs.WantToMakeDir) != 0
+	have.Create = (want & afs.WantToCreateFile) != 0
+	have.Write = (want & afs.WantToWriteFile) != 0
+	have.Read = (want & afs.WantToReadFile) != 0
+	have.Permission = fs.ModePerm
+
+	if have.Create {
+		have.Flag |= os.O_CREATE
 	}
 
-	return opt
+	if have.Write {
+		have.Flag |= os.O_WRONLY
+		have.Flag |= os.O_TRUNC
+	}
+
+	if have.Read {
+		have.Flag |= os.O_RDONLY
+	}
+
+	return have
 }

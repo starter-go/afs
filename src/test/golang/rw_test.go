@@ -31,14 +31,13 @@ func TestTrunc(t *testing.T) {
 	tmp := t.TempDir()
 	name := "demo-for-test-x"
 	file := files.FS().NewPath(tmp).GetChild(name)
-	ops := &afs.Options{
-		Create:     true,
-		Mkdirs:     true,
-		Permission: fs.ModePerm,
-	}
 	size := len(versions)
 
-	ops.Flag = os.O_TRUNC | os.O_WRONLY
+	ops := &afs.Options{
+		Mkdirs:     true,
+		Permission: fs.ModePerm,
+		Flag:       os.O_TRUNC | os.O_WRONLY | os.O_CREATE,
+	}
 
 	for i := size - 1; i > 0; i-- {
 		text1 := versions[i]
@@ -79,14 +78,11 @@ func TestSeekerRW(t *testing.T) {
 	tmp := t.TempDir()
 	name := "demo-for-test-"
 	file := files.FS().NewPath(tmp).GetChild(name)
-	ops := &afs.Options{
-		Create:     true,
-		Mkdirs:     true,
-		Flag:       os.O_RDWR,
-		Permission: fs.ModePerm,
-	}
 
-	// ops.Flag = os.O_TRUNC
+	ops := &afs.Options{
+		Permission: fs.ModePerm,
+		Flag:       os.O_RDWR | os.O_CREATE,
+	}
 
 	rw, err := file.GetIO().OpenSeekerRW(ops)
 	if err != nil {

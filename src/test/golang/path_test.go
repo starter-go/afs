@@ -1,7 +1,6 @@
 package golang
 
 import (
-	"io/fs"
 	"testing"
 
 	"bitwormhole.com/starter/afs"
@@ -135,15 +134,13 @@ func TestMoveTo(t *testing.T) {
 	file1 := tmp.GetChild("f1.txt")
 	file2 := tmp.GetChild("a/b/c/f2.txt")
 
-	err := file1.GetIO().WriteText(text1, &afs.Options{Create: true})
+	err := file1.GetIO().WriteText(text1, nil)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	file2.GetParent().Mkdirs(&afs.Options{
-		Permission: fs.ModePerm,
-	})
+	file2.GetParent().Mkdirs(nil)
 
 	err = file1.MoveTo(file2, nil)
 	if err != nil {

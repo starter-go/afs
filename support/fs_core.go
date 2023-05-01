@@ -13,7 +13,7 @@ type CommonFileSystem interface {
 	PathToElements(path string) []string
 	ElementsToPath(elements []string, prefix string, sep string) string
 	NormalizePathElements(elements []string) ([]string, error)
-	PrepareOptions(path afs.Path, have, want *afs.Options) *afs.Options
+	PrepareOptions(path afs.Path, have *afs.Options, want afs.WantOption) *afs.Options
 	SetDefaultOptionsHandler(fn afs.OptionsHandlerFunc) error
 }
 
@@ -79,9 +79,10 @@ func (inst *CommonFileSystemCore) NormalizePathElements(src []string) ([]string,
 	return dst, nil
 }
 
-func (inst *CommonFileSystemCore) PrepareOptions(path afs.Path, have, want *afs.Options) *afs.Options {
+func (inst *CommonFileSystemCore) PrepareOptions(p afs.Path, have *afs.Options, want afs.WantOption) *afs.Options {
 	fn := inst.getDefaultOptionsHandler()
-	return fn(path.GetPath(), have, want)
+	path := p.GetPath()
+	return fn(path, have, want)
 }
 
 func (inst *CommonFileSystemCore) SetDefaultOptionsHandler(h afs.OptionsHandlerFunc) error {
