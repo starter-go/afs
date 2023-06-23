@@ -54,6 +54,10 @@ func (inst *myShellFS) Separator() string {
 	return inst.context.platform.Separator()
 }
 
-func (inst *myShellFS) OpenReaderPool() afs.ReaderPool {
-	return nil
+// func (inst *myShellFS) OpenReaderPool() afs.ReaderPool {
+// 	return nil
+// }
+
+func (inst *myShellFS) SetDefaultOptionsHandler(h afs.OptionsHandlerFunc) error {
+	return inst.context.common.SetDefaultOptionsHandler(h)
 }

@@ -92,21 +92,17 @@ func (inst *myCommonPath) GetInfo() afs.FileInfo {
 }
 
 func (inst *myCommonPath) GetIO() afs.FileIO {
-	return &myCommonFileIO{path: inst}
+	return &myCommonFileIO{path: inst, context: inst.context}
 }
 
 func (inst *myCommonPath) Mkdir(op *afs.Options) error {
-	if op == nil {
-		op = &afs.Options{}
-	}
+	op = inst.prepareOptions(op, afs.WantToMakeDir)
 	path := inst.path
 	return os.Mkdir(path, op.Permission)
 }
 
 func (inst *myCommonPath) Mkdirs(op *afs.Options) error {
-	if op == nil {
-		op = &afs.Options{}
-	}
+	op = inst.prepareOptions(op, afs.WantToMakeDir)
 	path := inst.path
 	return os.MkdirAll(path, op.Permission)
 }
@@ -212,4 +208,8 @@ func (inst *myCommonPath) CopyTo(to afs.Path, opt *afs.Options) error {
 
 	_, err = io.Copy(dst, src)
 	return err
+}
+
+func (inst *myCommonPath) prepareOptions(have *afs.Options, want afs.WantOption) *afs.Options {
+	return inst.context.common.PrepareOptions(inst, have, want)
 }

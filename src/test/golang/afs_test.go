@@ -27,6 +27,7 @@ func TestFSCreateTempFile(t *testing.T) {
 	table["path"] = path.GetPath()
 	table["parent"] = path.GetParent().GetPath()
 	table["String"] = path.String()
+	table["mode"] = path.GetInfo().Mode().String()
 	for k, v := range table {
 		t.Log("path.", k, " = ", v)
 	}

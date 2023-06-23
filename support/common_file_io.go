@@ -3,7 +3,6 @@ package support
 import (
 	"errors"
 	"io"
-	"io/fs"
 	"os"
 	"strconv"
 
@@ -12,7 +11,8 @@ import (
 )
 
 type myCommonFileIO struct {
-	path afs.Path
+	path    afs.Path
+	context *myFSContext
 }
 
 func (inst *myCommonFileIO) _Impl() afs.FileIO {
@@ -24,24 +24,21 @@ func (inst *myCommonFileIO) Path() afs.Path {
 }
 
 func (inst *myCommonFileIO) openR(op *afs.Options) (*os.File, error) {
-	op = inst.prepareOptionsForRead(op)
+	op = inst.prepareOptions(op, afs.WantToReadFile)
 	path := inst.path.GetPath()
 	return os.OpenFile(path, op.Flag, op.Permission)
 }
 
 func (inst *myCommonFileIO) openW(op *afs.Options) (*os.File, error) {
-	op = inst.prepareOptionsForWrite(op)
+
+	op = inst.prepareOptions(op, afs.WantToWriteFile|afs.WantToCreateFile)
+
 	file := inst.path
-	path := file.GetPath()
 	if op.Mkdirs {
-		dir := file.GetParent()
-		if !dir.Exists() {
-			dir.Mkdirs(op)
-		}
+		dir := file.GetParent().GetPath()
+		os.MkdirAll(dir, op.Permission)
 	}
-	if op.Create {
-		op.Flag |= os.O_CREATE
-	}
+	path := file.GetPath()
 	return os.OpenFile(path, op.Flag, op.Permission)
 }
 
@@ -67,8 +64,6 @@ func (inst *myCommonFileIO) OpenSeekerRW(op *afs.Options) (afs.ReadWriteSeekClos
 
 func (inst *myCommonFileIO) ReadBinary(op *afs.Options) ([]byte, error) {
 
-	op = inst.prepareOptionsForRead(op)
-
 	r, err := inst.OpenReader(op)
 	if err != nil {
 		return nil, err
@@ -77,13 +72,11 @@ func (inst *myCommonFileIO) ReadBinary(op *afs.Options) ([]byte, error) {
 		err2 := r.Close()
 		inst.logError(err2)
 	}()
+
 	return io.ReadAll(r)
 }
 
 func (inst *myCommonFileIO) ReadText(op *afs.Options) (string, error) {
-
-	op = inst.prepareOptionsForRead(op)
-
 	data, err := inst.ReadBinary(op)
 	if err != nil {
 		return "", err
@@ -92,8 +85,6 @@ func (inst *myCommonFileIO) ReadText(op *afs.Options) (string, error) {
 }
 
 func (inst *myCommonFileIO) WriteBinary(b []byte, op *afs.Options) error {
-
-	op = inst.prepareOptionsForWrite(op)
 
 	if b == nil {
 		return errors.New("data buffer is nil")
@@ -124,9 +115,6 @@ func (inst *myCommonFileIO) WriteBinary(b []byte, op *afs.Options) error {
 }
 
 func (inst *myCommonFileIO) WriteText(text string, op *afs.Options) error {
-
-	op = inst.prepareOptionsForWrite(op)
-
 	data := []byte(text)
 	return inst.WriteBinary(data, op)
 }
@@ -138,25 +126,6 @@ func (inst *myCommonFileIO) logError(err error) {
 	vlog.Warn("%s", err.Error())
 }
 
-func (inst *myCommonFileIO) prepareOptionsForWrite(ops *afs.Options) *afs.Options {
-	if ops == nil {
-		ops = &afs.Options{}
-	}
-	if ops.Permission == 0 {
-		ops.Permission = fs.ModePerm
-	}
-	if ops.Flag == 0 {
-		ops.Flag = os.O_TRUNC | os.O_WRONLY
-	}
-	return ops
-}
-
-func (inst *myCommonFileIO) prepareOptionsForRead(ops *afs.Options) *afs.Options {
-	if ops == nil {
-		ops = &afs.Options{}
-	}
-	if ops.Flag == 0 {
-		ops.Flag = os.O_RDONLY
-	}
-	return ops
+func (inst *myCommonFileIO) prepareOptions(have *afs.Options, want afs.WantOption) *afs.Options {
+	return inst.context.common.PrepareOptions(inst.path, have, want)
 }

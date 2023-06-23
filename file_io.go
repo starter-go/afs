@@ -2,22 +2,7 @@ package afs
 
 import (
 	"io"
-	"io/fs"
 )
-
-// Options ...
-type Options struct {
-
-	// file with fs.ModeXXX
-	Permission fs.FileMode
-
-	// fill with os.O_xxxx
-	Flag int
-
-	Mkdirs bool
-
-	Create bool
-}
 
 // FileIO ...
 type FileIO interface {
