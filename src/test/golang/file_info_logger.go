@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 type fileInfoLogger struct {

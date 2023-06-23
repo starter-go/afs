@@ -4,7 +4,7 @@ import (
 	"io/fs"
 	"os"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 type defaultOptionsHandler struct{}
