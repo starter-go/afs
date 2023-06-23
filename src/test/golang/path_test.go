@@ -1,6 +1,8 @@
 package golang
 
 import (
+	"io/fs"
+	"os"
 	"testing"
 
 	"github.com/starter-go/afs"
@@ -63,9 +65,18 @@ func TestFilePathInfo(t *testing.T) {
 	info := file1.GetInfo()
 	logFileInfo(info, t)
 
+	opt := &afs.Options{
+		Mkdirs:     true,
+		Create:     true,
+		Write:      true,
+		File:       true,
+		Flag:       os.O_CREATE | os.O_WRONLY,
+		Permission: fs.ModePerm,
+	}
+
 	if !info.Exists() {
 		data := []byte("hello, afs file")
-		err := file1.CreateWithData(data, &afs.Options{Create: true})
+		err := file1.CreateWithData(data, opt)
 		if err != nil {
 			t.Error(err)
 		}
@@ -103,13 +114,20 @@ func TestCopyTo(t *testing.T) {
 	file1 := tmp.GetChild("f1.txt")
 	file2 := tmp.GetChild("a/b/c/f2.txt")
 
-	err := file1.GetIO().WriteText(text1, &afs.Options{Create: true})
+	opt := &afs.Options{
+		Mkdirs:     true,
+		Create:     true,
+		Flag:       os.O_CREATE | os.O_WRONLY,
+		Permission: fs.ModePerm,
+	}
+
+	err := file1.GetIO().WriteText(text1, opt)
 	if err != nil {
 		t.Error(err)
 		return
 	}
 
-	err = file1.CopyTo(file2, &afs.Options{Mkdirs: true, Create: true})
+	err = file1.CopyTo(file2, opt)
 	if err != nil {
 		t.Error(err)
 		return
