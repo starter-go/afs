@@ -4,7 +4,7 @@ import (
 	"os"
 	"strings"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 // GetWindowsFS ...

@@ -3,7 +3,7 @@ package support
 import (
 	"os"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 type myShellFS struct {

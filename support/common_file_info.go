@@ -5,7 +5,7 @@ import (
 	"os"
 	"time"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 type myCommonFileInfo struct {

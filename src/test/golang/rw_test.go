@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"bitwormhole.com/starter/afs"
-	"bitwormhole.com/starter/afs/files"
+	"github.com/starter-go/afs"
+	"github.com/starter-go/afs/files"
 )
 
 func TestTrunc(t *testing.T) {

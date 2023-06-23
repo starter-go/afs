@@ -1,6 +1,6 @@
 package support
 
-import "bitwormhole.com/starter/afs"
+import "github.com/starter-go/afs"
 
 type myFSContext struct {
 	common   CommonFileSystem

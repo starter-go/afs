@@ -4,8 +4,8 @@ import (
 	"io/fs"
 	"testing"
 
-	"bitwormhole.com/starter/afs"
-	"bitwormhole.com/starter/afs/files"
+	"github.com/starter-go/afs"
+	"github.com/starter-go/afs/files"
 )
 
 func logFileInfo(info afs.FileInfo, t *testing.T) {

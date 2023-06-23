@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 // CommonFileSystem 所有平台共享的核心结构

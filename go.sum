@@ -1,4 +1,8 @@
-bitwormhole.com/starter/base v0.0.0-20220718031435-6de2532eedf1 h1:iqjIy0b9aZlyHRA5uQd+nfw5f2ZyFet/s9UoPPZjbe4=
-bitwormhole.com/starter/base v0.0.0-20220718031435-6de2532eedf1/go.mod h1:a8v7ioNoU380zyISNEXTaVInVFu00FvXo3UHJAckPG0=
-bitwormhole.com/starter/vlog v0.0.0-20220717141231-71498d1f5184 h1:HkOmqSZbE+I0kE336mxZdPYw85OwQs9lLDHwNB8AWe0=
-bitwormhole.com/starter/vlog v0.0.0-20220717141231-71498d1f5184/go.mod h1:bb4xDVyOD0+tAhaiscUmuzsFJ+/EL+qE79Je8U0ZqTQ=
+github.com/starter-go/base v0.0.0-20220718031435-6de2532eedf1 h1:iqjIy0b9aZlyHRA5uQd+nfw5f2ZyFet/s9UoPPZjbe4=
+github.com/starter-go/base v0.0.0-20220718031435-6de2532eedf1/go.mod h1:a8v7ioNoU380zyISNEXTaVInVFu00FvXo3UHJAckPG0=
+github.com/starter-go/vlog v0.0.0-20220717141231-71498d1f5184 h1:HkOmqSZbE+I0kE336mxZdPYw85OwQs9lLDHwNB8AWe0=
+github.com/starter-go/vlog v0.0.0-20220717141231-71498d1f5184/go.mod h1:bb4xDVyOD0+tAhaiscUmuzsFJ+/EL+qE79Je8U0ZqTQ=
+github.com/starter-go/base v0.9.1 h1:eN1ZwMgs2ZEXeqNSXpaeojqAafCMm8uGXAvdO+m6qAg=
+github.com/starter-go/base v0.9.1/go.mod h1:cTaamu+V1rSWCnfkeebl7yVZHlZiBHzxNVZap47wbtw=
+github.com/starter-go/vlog v0.9.0 h1:RuWHk9dLb9JPKflDrROsYhjAkoxAHI7eZ3avHyJXtQw=
+github.com/starter-go/vlog v0.9.0/go.mod h1:WSaU9IGbEaDe/Eoh2W8JOjSn6wdjfGkgBbxJxaqUI/0=

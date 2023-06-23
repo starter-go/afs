@@ -7,8 +7,8 @@ import (
 	"os"
 	"strconv"
 
-	"bitwormhole.com/starter/afs"
-	"bitwormhole.com/starter/vlog"
+	"github.com/starter-go/afs"
+	"github.com/starter-go/vlog"
 )
 
 type myCommonFileIO struct {
@@ -135,7 +135,7 @@ func (inst *myCommonFileIO) logError(err error) {
 	if err == nil {
 		return
 	}
-	vlog.Warn(err)
+	vlog.Warn("%s", err.Error())
 }
 
 func (inst *myCommonFileIO) prepareOptionsForWrite(ops *afs.Options) *afs.Options {

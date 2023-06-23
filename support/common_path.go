@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"bitwormhole.com/starter/afs"
-	"bitwormhole.com/starter/base/util"
+	"github.com/starter-go/afs"
+	"github.com/starter-go/base/util"
 )
 
 type myCommonPath struct {

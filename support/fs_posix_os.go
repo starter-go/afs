@@ -1,7 +1,7 @@
 package support
 
 import (
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 // GetPosixFS ...

@@ -3,7 +3,7 @@ package golang
 import (
 	"testing"
 
-	"bitwormhole.com/starter/afs/files"
+	"github.com/starter-go/afs/files"
 )
 
 func TestFSListRoots(t *testing.T) {

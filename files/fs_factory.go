@@ -3,8 +3,8 @@ package files
 import (
 	"runtime"
 
-	"bitwormhole.com/starter/afs"
-	"bitwormhole.com/starter/afs/support"
+	"github.com/starter-go/afs"
+	"github.com/starter-go/afs/support"
 )
 
 // FS ...

@@ -5,7 +5,7 @@ import (
 	"io"
 	"sync"
 
-	"bitwormhole.com/starter/afs"
+	"github.com/starter-go/afs"
 )
 
 // todo ... 还没有完全实现！

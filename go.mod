@@ -1,8 +1,8 @@
-module bitwormhole.com/starter/afs
+module github.com/starter-go/afs
 
 go 1.18
 
 require (
-	bitwormhole.com/starter/base v0.0.0-20220718031435-6de2532eedf1 // direct
-	bitwormhole.com/starter/vlog v0.0.0-20220717141231-71498d1f5184 // direct
+	github.com/starter-go/base v0.9.1 // direct
+	github.com/starter-go/vlog v0.9.0 // direct
 )
