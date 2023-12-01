@@ -66,10 +66,6 @@ func TestFilePathInfo(t *testing.T) {
 	logFileInfo(info, t)
 
 	opt := &afs.Options{
-		Mkdirs:     true,
-		Create:     true,
-		Write:      true,
-		File:       true,
 		Flag:       os.O_CREATE | os.O_WRONLY,
 		Permission: fs.ModePerm,
 	}
@@ -114,12 +110,8 @@ func TestCopyTo(t *testing.T) {
 	file1 := tmp.GetChild("f1.txt")
 	file2 := tmp.GetChild("a/b/c/f2.txt")
 
-	opt := &afs.Options{
-		Mkdirs:     true,
-		Create:     true,
-		Flag:       os.O_CREATE | os.O_WRONLY,
-		Permission: fs.ModePerm,
-	}
+	opt := afs.Todo()
+	opt = nil
 
 	err := file1.GetIO().WriteText(text1, opt)
 	if err != nil {
@@ -127,6 +119,7 @@ func TestCopyTo(t *testing.T) {
 		return
 	}
 
+	file2.MakeParents(nil)
 	err = file1.CopyTo(file2, opt)
 	if err != nil {
 		t.Error(err)

@@ -34,7 +34,6 @@ func TestTrunc(t *testing.T) {
 	size := len(versions)
 
 	ops := &afs.Options{
-		Mkdirs:     true,
 		Permission: fs.ModePerm,
 		Flag:       os.O_TRUNC | os.O_WRONLY | os.O_CREATE,
 	}
@@ -151,7 +150,8 @@ func TestDefaultWrite(t *testing.T) {
 
 	// create file
 	data := "666"
-	err = file.CreateWithData([]byte(data), nil)
+	file.MakeParents(nil)
+	err = file.CreateWithData([]byte(data), afs.ToCreateFile())
 	if err != nil {
 		t.Error(err)
 	}
@@ -159,6 +159,7 @@ func TestDefaultWrite(t *testing.T) {
 
 	// write file
 	data = "loooooooooooooooooooooooooooong"
+	file.MakeParents(nil)
 	err = file.GetIO().WriteText(data, nil)
 	if err != nil {
 		t.Error(err)

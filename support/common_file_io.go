@@ -31,14 +31,21 @@ func (inst *myCommonFileIO) openR(op *afs.Options) (*os.File, error) {
 
 func (inst *myCommonFileIO) openW(op *afs.Options) (*os.File, error) {
 
-	op = inst.prepareOptions(op, afs.WantToWriteFile|afs.WantToCreateFile)
+	// op = inst.prepareOptions(op, afs.WantToWriteFile|afs.WantToCreateFile)
+
+	if op == nil {
+		const t = true
+		op = afs.Todo().Write(t).Create(t).ResetLength(t).Prepare()
+	}
 
 	file := inst.path
-	if op.Mkdirs {
-		dir := file.GetParent().GetPath()
-		os.MkdirAll(dir, op.Permission)
-	}
 	path := file.GetPath()
+
+	// if op.Mkdirs {
+	// 	dir := file.GetParent().GetPath()
+	// 	os.MkdirAll(dir, op.Permission)
+	// }
+
 	return os.OpenFile(path, op.Flag, op.Permission)
 }
 

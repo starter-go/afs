@@ -79,12 +79,14 @@ func (inst *CommonFileSystemCore) NormalizePathElements(src []string) ([]string,
 	return dst, nil
 }
 
+// PrepareOptions ...
 func (inst *CommonFileSystemCore) PrepareOptions(p afs.Path, have *afs.Options, want afs.WantOption) *afs.Options {
 	fn := inst.getDefaultOptionsHandler()
 	path := p.GetPath()
 	return fn(path, have, want)
 }
 
+// SetDefaultOptionsHandler ...
 func (inst *CommonFileSystemCore) SetDefaultOptionsHandler(h afs.OptionsHandlerFunc) error {
 	old := inst.context.optionsHandler
 	if old != nil {

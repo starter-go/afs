@@ -43,6 +43,8 @@ type Path interface {
 
 	Mkdirs(opt *Options) error
 
+	MakeParents(opt *Options) error
+
 	Delete() error
 
 	Create(opt *Options) error

@@ -96,15 +96,30 @@ func (inst *myCommonPath) GetIO() afs.FileIO {
 }
 
 func (inst *myCommonPath) Mkdir(op *afs.Options) error {
-	op = inst.prepareOptions(op, afs.WantToMakeDir)
+	if op == nil {
+		op = afs.ToMakeDir()
+	}
 	path := inst.path
 	return os.Mkdir(path, op.Permission)
 }
 
 func (inst *myCommonPath) Mkdirs(op *afs.Options) error {
-	op = inst.prepareOptions(op, afs.WantToMakeDir)
+	if op == nil {
+		op = afs.ToMakeDir()
+	}
 	path := inst.path
 	return os.MkdirAll(path, op.Permission)
+}
+
+func (inst *myCommonPath) MakeParents(op *afs.Options) error {
+	dir := inst.GetParent()
+	if dir.IsDirectory() {
+		return nil // skip
+	} else if dir.IsFile() {
+		path := dir.GetPath()
+		return fmt.Errorf("want a dir, but have a file, path = %s", path)
+	}
+	return dir.Mkdirs(op)
 }
 
 func (inst *myCommonPath) Delete() error {
