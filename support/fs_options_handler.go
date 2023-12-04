@@ -23,5 +23,5 @@ func (inst *defaultOptionsHandler) handle(path string, have *afs.Options, want a
 	case afs.WantToWriteFile:
 		return afs.ToWriteFile()
 	}
-	return afs.Todo()
+	return afs.Todo().Options()
 }

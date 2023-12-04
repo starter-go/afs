@@ -5,24 +5,10 @@ import (
 	"os"
 )
 
-// Flags ...
-type Flags struct {
-	Mkdirs      bool
-	Create      bool
-	Append      bool
-	Read        bool
-	Write       bool
-	File        bool
-	Dir         bool
-	FromBegin   bool
-	ResetLength bool // set length = 0
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 // Options ...
 type Options struct {
-	flags Flags
 
 	// fill with fs.ModeXXX
 	Permission fs.FileMode
@@ -31,132 +17,149 @@ type Options struct {
 	Flag int
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+// ToMakeDir ...
+func ToMakeDir() *Options {
+	opt := new(Options)
+	opt.Permission = fs.ModePerm
+	opt.Flag = 0
+	return opt
+}
+
+// ToReadFile ...
+func ToReadFile() *Options {
+	opt := new(Options)
+	opt.Permission = fs.ModePerm
+	opt.Flag = os.O_RDONLY
+	return opt
+}
+
+// ToWriteFile ...
+func ToWriteFile() *Options {
+	opt := new(Options)
+	opt.Permission = fs.ModePerm
+	opt.Flag = os.O_WRONLY | os.O_TRUNC
+	return opt
+}
+
+// ToCreateFile ...
+func ToCreateFile() *Options {
+	opt := new(Options)
+	opt.Permission = fs.ModePerm
+	opt.Flag = os.O_WRONLY | os.O_TRUNC | os.O_CREATE
+	return opt
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// OptionsBuilder 用于创建复合的 Options
+type OptionsBuilder struct {
+	mkdirs      bool
+	create      bool
+	append      bool
+	read        bool
+	write       bool
+	file        bool
+	dir         bool
+	fromBegin   bool
+	resetLength bool // set length = 0
+}
+
 // Create ...
-func (inst *Options) Create(value bool) *Options {
-	inst.flags.Create = value
+func (inst *OptionsBuilder) Create(value bool) *OptionsBuilder {
+	inst.create = value
 	return inst
 }
 
 // Read ...
-func (inst *Options) Read(value bool) *Options {
-	inst.flags.Read = value
+func (inst *OptionsBuilder) Read(value bool) *OptionsBuilder {
+	inst.read = value
 	return inst
 }
 
 // Write ...
-func (inst *Options) Write(value bool) *Options {
-	inst.flags.Write = value
+func (inst *OptionsBuilder) Write(value bool) *OptionsBuilder {
+	inst.write = value
 	return inst
 }
 
 // File ...
-func (inst *Options) File(value bool) *Options {
-	inst.flags.File = value
+func (inst *OptionsBuilder) File(value bool) *OptionsBuilder {
+	inst.file = value
 	return inst
 }
 
 // Dir ...
-func (inst *Options) Dir(value bool) *Options {
-	inst.flags.Dir = value
+func (inst *OptionsBuilder) Dir(value bool) *OptionsBuilder {
+	inst.dir = value
 	return inst
 }
 
 // Mkdirs ...
-func (inst *Options) Mkdirs(value bool) *Options {
-	inst.flags.Mkdirs = value
+func (inst *OptionsBuilder) Mkdirs(value bool) *OptionsBuilder {
+	inst.mkdirs = value
 	return inst
 }
 
 // Append ...
-func (inst *Options) Append(value bool) *Options {
-	inst.flags.Append = value
+func (inst *OptionsBuilder) Append(value bool) *OptionsBuilder {
+	inst.append = value
 	return inst
 }
 
 // FromBegin ...
-func (inst *Options) FromBegin(value bool) *Options {
-	inst.flags.FromBegin = value
+func (inst *OptionsBuilder) FromBegin(value bool) *OptionsBuilder {
+	inst.fromBegin = value
 	return inst
 }
 
 // ResetLength ...
-func (inst *Options) ResetLength(value bool) *Options {
-	inst.flags.ResetLength = value
+func (inst *OptionsBuilder) ResetLength(value bool) *OptionsBuilder {
+	inst.resetLength = value
 	return inst
 }
 
-// Prepare ...
-func (inst *Options) Prepare() *Options {
+// Options 创建 Options
+func (inst *OptionsBuilder) Options() *Options {
 
-	flags := inst.flags
 	f := 0
 
-	if flags.Create {
+	if inst.create {
 		f = f | os.O_CREATE
 	}
 
-	if flags.Read {
-		if flags.Write {
+	if inst.read {
+		if inst.write {
 			f = f | os.O_RDWR
 		} else {
 			f = f | os.O_RDONLY
 		}
 	} else {
-		if flags.Write {
+		if inst.write {
 			f = f | os.O_WRONLY
 		} else {
 			f = f | 0
 		}
 	}
 
-	if flags.ResetLength {
+	if inst.resetLength {
 		f = f | os.O_TRUNC
 	}
 
-	if flags.Append {
+	if inst.append {
 		f = f | os.O_APPEND
 	}
 
-	inst.Flag = f
-	inst.Permission = fs.ModePerm
-	return inst
+	opt := new(Options)
+	opt.Flag = f
+	opt.Permission = fs.ModePerm
+	return opt
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Todo ...
-func Todo() *Options {
-	return &Options{}
-}
-
-// ToMakeDir ...
-func ToMakeDir() *Options {
-	inst := Todo()
-	inst.Permission = fs.ModePerm
-	inst.Flag = 0
-	return inst
-}
-
-// ToReadFile ...
-func ToReadFile() *Options {
-	inst := Todo()
-	inst.Permission = fs.ModePerm
-	inst.Flag = os.O_RDONLY
-	return inst
-}
-
-// ToWriteFile ...
-func ToWriteFile() *Options {
-	inst := Todo()
-	inst.Permission = fs.ModePerm
-	inst.Flag = os.O_WRONLY | os.O_TRUNC
-	return inst
-}
-
-// ToCreateFile ...
-func ToCreateFile() *Options {
-	inst := Todo()
-	inst.Permission = fs.ModePerm
-	inst.Flag = os.O_WRONLY | os.O_TRUNC | os.O_CREATE
-	return inst
+// Todo 新建一个 OptionsBuilder 对象
+func Todo() *OptionsBuilder {
+	return new(OptionsBuilder)
 }

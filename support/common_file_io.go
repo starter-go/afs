@@ -35,7 +35,7 @@ func (inst *myCommonFileIO) openW(op *afs.Options) (*os.File, error) {
 
 	if op == nil {
 		const t = true
-		op = afs.Todo().Write(t).Create(t).ResetLength(t).Prepare()
+		op = afs.Todo().Write(t).Create(t).ResetLength(t).Options()
 	}
 
 	file := inst.path

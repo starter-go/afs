@@ -110,7 +110,7 @@ func TestCopyTo(t *testing.T) {
 	file1 := tmp.GetChild("f1.txt")
 	file2 := tmp.GetChild("a/b/c/f2.txt")
 
-	opt := afs.Todo()
+	opt := afs.Todo().Options()
 	opt = nil
 
 	err := file1.GetIO().WriteText(text1, opt)
