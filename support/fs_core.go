@@ -3,6 +3,7 @@ package support
 import (
 	"errors"
 	"fmt"
+	"os/user"
 	"strings"
 
 	"github.com/starter-go/afs"
@@ -72,11 +73,32 @@ func (inst *CommonFileSystemCore) NormalizePathElements(src []string) ([]string,
 			} else {
 				return nil, errors.New("too many '..'")
 			}
+		} else if el == "~" {
+			// user.home
+			dst = inst.getUserHomePathElements()
+		} else if el == "file:" {
+			// fs.root
+			dst = make([]string, 0)
 		} else {
 			dst = append(dst, el)
 		}
 	}
 	return dst, nil
+}
+
+func (inst *CommonFileSystemCore) getUserHomePathElements() []string {
+	empty := make([]string, 0)
+	u, err := user.Current()
+	if err != nil {
+		return empty
+	}
+	path := u.HomeDir
+	elist := inst.PathToElements(path)
+	elist, err = inst.NormalizePathElements(elist)
+	if err != nil {
+		return empty
+	}
+	return elist
 }
 
 // PrepareOptions ...

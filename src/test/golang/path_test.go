@@ -7,6 +7,7 @@ import (
 
 	"github.com/starter-go/afs"
 	"github.com/starter-go/afs/files"
+	"github.com/starter-go/vlog"
 )
 
 func logFileInfo(info afs.FileInfo, t *testing.T) {
@@ -187,4 +188,27 @@ func TestRoot(t *testing.T) {
 		t.Log("  find root: ", root.GetPath())
 	}
 
+}
+
+func TestNormalizePath(t *testing.T) {
+
+	fs1 := files.FS()
+	paths := make([]string, 0)
+
+	paths = append(paths, "file:///a/b/cd")
+	paths = append(paths, "~/x/y/z1")
+	paths = append(paths, "c:\\i\\j\\kkk")
+	paths = append(paths, "~/a/b/c/./d/e/f/g")
+	paths = append(paths, "~/a/b/c/../d/e/f")
+	paths = append(paths, "~/a/b/c/./////////./d/e/f")
+	paths = append(paths, "c:\\i\\j\\k////file:////c:////kk")
+	paths = append(paths, "c:\\i\\j\\k///////~////kk")
+
+	for _, path := range paths {
+		p1 := path
+		p2 := fs1.NewPath(p1).GetPath()
+		vlog.Info("test normalizePath(p1) p2")
+		vlog.Info("    p1 = %s", p1)
+		vlog.Info("    p2 = %s", p2)
+	}
 }
