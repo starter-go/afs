@@ -94,7 +94,8 @@ func TestGetParent(t *testing.T) {
 		if p == nil {
 			break
 		}
-		t.Log("current path = ", p.GetPath())
+		// t.Log("current path = ", p.GetPath())
+		vlog.Info("current path = %s", p.GetPath())
 		p = p.GetParent()
 	}
 	if p == nil {

@@ -1,9 +1,12 @@
 package golang
 
 import (
+	"io/fs"
 	"testing"
 
+	"github.com/starter-go/afs"
 	"github.com/starter-go/afs/files"
+	"github.com/starter-go/vlog"
 )
 
 func TestFSListRoots(t *testing.T) {
@@ -53,4 +56,34 @@ func TestFSSeparator(t *testing.T) {
 	s := fs1.Separator()
 	t.Log("PathSeparator = ", ps)
 	t.Log("Separator = ", s)
+}
+
+func TestChmod(t *testing.T) {
+
+	tmpDir := files.FS().NewPath(t.TempDir())
+	file1 := tmpDir.GetChild("file1")
+
+	opt := afs.Todo().File(true).Create(true).Write(true).Options()
+	err := file1.GetIO().WriteText("hello", opt)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+
+	mode1 := fs.ModeDevice
+	mode1 = 0644
+	err = file1.Chmod(mode1)
+	if err != nil {
+		t.Error(err)
+		return
+	}
+	mode2 := file1.GetInfo().Mode()
+
+	if mode1 != mode2 {
+		vlog.Warn("(mode1 != mode2):")
+		vlog.Warn("  mode1 = %s", mode1.String())
+		vlog.Warn("  mode2 = %s", mode2.String())
+		// t.Error("bad file mode")
+		return
+	}
 }

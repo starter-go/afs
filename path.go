@@ -1,6 +1,9 @@
 package afs
 
-import "io"
+import (
+	"io"
+	"io/fs"
+)
 
 // Path 是表示绝对路径的接口
 type Path interface {
@@ -44,6 +47,10 @@ type Path interface {
 	Mkdirs(opt *Options) error
 
 	MakeParents(opt *Options) error
+
+	Chmod(m fs.FileMode) error
+
+	Chown(uid, gid int) error
 
 	Delete() error
 

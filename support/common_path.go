@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/fs"
 	"os"
 	"strings"
 
@@ -227,4 +228,14 @@ func (inst *myCommonPath) CopyTo(to afs.Path, opt *afs.Options) error {
 
 func (inst *myCommonPath) prepareOptions(have *afs.Options, want afs.WantOption) *afs.Options {
 	return inst.context.common.PrepareOptions(inst, have, want)
+}
+
+func (inst *myCommonPath) Chmod(m fs.FileMode) error {
+	path := inst.path
+	return os.Chmod(path, m)
+}
+
+func (inst *myCommonPath) Chown(uid, gid int) error {
+	path := inst.path
+	return os.Chown(path, uid, gid)
 }

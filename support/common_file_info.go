@@ -30,6 +30,7 @@ func (inst *myCommonFileInfo) load(path afs.Path) error {
 	inst.err = err
 	inst.info = info
 	inst.path = path
+
 	return nil
 }
 
@@ -82,6 +83,14 @@ func (inst *myCommonFileInfo) IsDirectory() bool {
 		return false
 	}
 	return inst.info.IsDir()
+}
+
+func (inst *myCommonFileInfo) UID() int {
+	return 0
+}
+
+func (inst *myCommonFileInfo) GID() int {
+	return 0
 }
 
 ////////////////////////////////////////////////////////////////////////////////

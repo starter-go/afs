@@ -22,4 +22,8 @@ type FileInfo interface {
 	IsFile() bool
 
 	IsDirectory() bool
+
+	// UID() int
+	// GID() int
+
 }
