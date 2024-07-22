@@ -20,6 +20,8 @@ type Path interface {
 
 	GetPath() string
 
+	GetURI() URI
+
 	GetInfo() FileInfo
 
 	String() string

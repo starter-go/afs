@@ -54,6 +54,28 @@ func (inst *myCommonPath) String() string {
 	return inst.path
 }
 
+func (inst *myCommonPath) GetURI() afs.URI {
+	path := inst.path
+	elements := inst.context.common.PathToElements(path)
+	builder := &strings.Builder{}
+	builder.WriteString("file:")
+	count := 0
+	for _, el := range elements {
+		el = strings.TrimSpace(el)
+		if el == "" {
+			continue
+		}
+		builder.WriteRune('/')
+		builder.WriteString(el)
+		count++
+	}
+	if count == 0 {
+		builder.WriteRune('/')
+	}
+	str := builder.String()
+	return afs.URI(str)
+}
+
 func (inst *myCommonPath) GetName() string {
 
 	sep := inst.context.platform.Separator()
