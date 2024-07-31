@@ -182,6 +182,11 @@ func TestRoot(t *testing.T) {
 			t.Log("  find item: ", name)
 		}
 	}
+	info := path.GetInfo()
+	info.AccessedAt()
+	info.CreatedAt()
+	info.UpdatedAt()
+	info.Mode()
 
 	// roots
 	roots := files.FS().ListRoots()

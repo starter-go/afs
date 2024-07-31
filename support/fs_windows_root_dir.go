@@ -64,10 +64,8 @@ func (inst *myWindowsVRootDir) GetURI() afs.URI {
 }
 
 func (inst *myWindowsVRootDir) GetInfo() afs.FileInfo {
-	info := &myCommonFileInfo{
-		path:   inst,
-		exists: true,
-	}
+	info := &myCommonFileInfo{context: inst.context}
+	info.load(inst)
 	return info
 }
 

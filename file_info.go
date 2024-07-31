@@ -15,6 +15,8 @@ type FileInfo interface {
 
 	UpdatedAt() time.Time
 
+	AccessedAt() time.Time
+
 	Mode() fs.FileMode
 
 	Exists() bool

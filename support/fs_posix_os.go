@@ -59,4 +59,5 @@ func (inst *myPosixFS) Separator() string {
 
 func (inst *myPosixFS) ListRoots() []string {
 	return []string{"/"}
+	// return platforms.Roots()
 }

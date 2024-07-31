@@ -28,6 +28,7 @@ type PlatformFileSystem interface {
 	GetCommonFileSystem() CommonFileSystem
 	GetFS() afs.FS
 	New(path string) afs.Path
+	// CreatedAt(info fs.FileInfo) time.Time
 }
 
 ////////////////////////////////////////////////////////////////////////////////

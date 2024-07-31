@@ -1,12 +1,10 @@
 package support
 
 import (
-	"os"
 	"strings"
 
 	"github.com/starter-go/afs"
-	"github.com/starter-go/vlog"
-	"golang.org/x/sys/windows"
+	"github.com/starter-go/afs/support/platforms"
 )
 
 // GetWindowsFS ...
@@ -76,39 +74,16 @@ func (inst *myWindowsFS) Separator() string {
 	return "\\"
 }
 
-func (inst *myWindowsFS) isRootExists(path string) bool {
-	_, err := os.Stat(path)
-	return err == nil || os.IsExist(err)
-}
+// func (inst *myWindowsFS) isRootExists(path string) bool {
+// 	_, err := os.Stat(path)
+// 	return err == nil || os.IsExist(err)
+// }
 
-func (inst *myWindowsFS) innerListRoots() ([]string, error) {
-	const (
-		driveA rune = 'A'
-		driveZ rune = 'Z'
-	)
-	bits, err := windows.GetLogicalDrives()
-	if err != nil {
-		return nil, err
-	}
-	list := make([]string, 0)
-	for drive := driveA; drive <= driveZ; drive++ {
-		idx := int(drive - driveA)
-		has := (bits >> idx) & 0x0001
-		path := string(drive) + ":\\"
-		if has != 0 {
-			list = append(list, path)
-		}
-	}
-	return list, nil
-}
+// func (inst *myWindowsFS) innerListRoots() ([]string, error) {
+// }
 
 func (inst *myWindowsFS) ListRoots() []string {
-	list, err := inst.innerListRoots()
-	if err != nil {
-		vlog.Warn(err.Error())
-		return []string{}
-	}
-	return list
+	return platforms.Roots()
 }
 
 func (inst *myWindowsFS) GetCommonFileSystem() CommonFileSystem {

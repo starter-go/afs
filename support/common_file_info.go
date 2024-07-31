@@ -6,13 +6,15 @@ import (
 	"time"
 
 	"github.com/starter-go/afs"
+	"github.com/starter-go/afs/support/platforms"
 )
 
 type myCommonFileInfo struct {
-	path   afs.Path
-	err    error
-	exists bool
-	info   fs.FileInfo
+	context *myFSContext
+	path    afs.Path
+	err     error
+	exists  bool
+	info    fs.FileInfo
 }
 
 func (inst *myCommonFileInfo) _Impl() afs.FileInfo {
@@ -53,7 +55,12 @@ func (inst *myCommonFileInfo) CreatedAt() time.Time {
 	if !inst.exists {
 		return time.Unix(0, 0)
 	}
-	return inst.info.ModTime()
+	info := inst.info
+	return platforms.CreatedAt(info)
+}
+
+func (inst *myCommonFileInfo) AccessedAt() time.Time {
+	return inst.UpdatedAt()
 }
 
 func (inst *myCommonFileInfo) UpdatedAt() time.Time {

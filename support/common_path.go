@@ -109,7 +109,7 @@ func (inst *myCommonPath) GetPath() string {
 }
 
 func (inst *myCommonPath) GetInfo() afs.FileInfo {
-	info := &myCommonFileInfo{}
+	info := &myCommonFileInfo{context: inst.context}
 	info.load(inst)
 	return info
 }
