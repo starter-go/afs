@@ -16,6 +16,7 @@ type CommonFileSystem interface {
 	NormalizePathElements(elements []string) ([]string, error)
 	PrepareOptions(path afs.Path, have *afs.Options, want afs.WantOption) *afs.Options
 	SetDefaultOptionsHandler(fn afs.OptionsHandlerFunc) error
+	New(path string) afs.Path
 }
 
 // PlatformFileSystem 各个平台独有的核心结构
@@ -26,6 +27,7 @@ type PlatformFileSystem interface {
 	ListRoots() []string
 	GetCommonFileSystem() CommonFileSystem
 	GetFS() afs.FS
+	New(path string) afs.Path
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,6 +39,12 @@ type CommonFileSystemCore struct {
 
 func (inst *CommonFileSystemCore) _Impl() CommonFileSystem {
 	return inst
+}
+
+// New ...
+func (inst *CommonFileSystemCore) New(path string) afs.Path {
+	p2, _ := inst.context.platform.NormalizePath(path)
+	return &myCommonPath{context: inst.context, path: p2}
 }
 
 // PathToElements 把路径拆分成文件名元素

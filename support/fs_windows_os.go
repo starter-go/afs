@@ -5,6 +5,8 @@ import (
 	"strings"
 
 	"github.com/starter-go/afs"
+	"github.com/starter-go/vlog"
+	"golang.org/x/sys/windows"
 )
 
 // GetWindowsFS ...
@@ -28,6 +30,25 @@ func (inst *myWindowsFS) _Impl() PlatformFileSystem {
 
 func (inst *myWindowsFS) GetFS() afs.FS {
 	return inst.context.shell
+}
+
+func (inst *myWindowsFS) New(path string) afs.Path {
+	const pathLenLimit = 8
+	l := len(path)
+	if l < pathLenLimit {
+		p2, err := inst.NormalizePath(path)
+		if err == nil {
+			if p2 == "" || p2 == "/" || p2 == "//" || p2 == "///" {
+				return inst.loadWindowsVRootDir()
+			}
+		}
+	}
+	return inst.context.common.New(path)
+}
+
+func (inst *myWindowsFS) loadWindowsVRootDir() afs.Path {
+	loader := &myWindowsVRootDirLoader{context: inst.context}
+	return loader.load()
 }
 
 func (inst *myWindowsFS) NormalizePath(path string) (string, error) {
@@ -60,15 +81,32 @@ func (inst *myWindowsFS) isRootExists(path string) bool {
 	return err == nil || os.IsExist(err)
 }
 
-func (inst *myWindowsFS) ListRoots() []string {
-	const driveA rune = 'A'
-	const driveZ rune = 'Z'
+func (inst *myWindowsFS) innerListRoots() ([]string, error) {
+	const (
+		driveA rune = 'A'
+		driveZ rune = 'Z'
+	)
+	bits, err := windows.GetLogicalDrives()
+	if err != nil {
+		return nil, err
+	}
 	list := make([]string, 0)
 	for drive := driveA; drive <= driveZ; drive++ {
+		idx := int(drive - driveA)
+		has := (bits >> idx) & 0x0001
 		path := string(drive) + ":\\"
-		if inst.isRootExists(path) {
+		if has != 0 {
 			list = append(list, path)
 		}
+	}
+	return list, nil
+}
+
+func (inst *myWindowsFS) ListRoots() []string {
+	list, err := inst.innerListRoots()
+	if err != nil {
+		vlog.Warn(err.Error())
+		return []string{}
 	}
 	return list
 }

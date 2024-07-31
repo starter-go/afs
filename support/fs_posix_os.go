@@ -30,6 +30,10 @@ func (inst *myPosixFS) GetCommonFileSystem() CommonFileSystem {
 	return inst.context.common
 }
 
+func (inst *myPosixFS) New(path string) afs.Path {
+	return inst.context.common.New(path)
+}
+
 func (inst *myPosixFS) NormalizePath(path string) (string, error) {
 	comm := inst.context.common
 	sep := inst.Separator()

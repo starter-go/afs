@@ -6,6 +6,8 @@ import "errors"
 type FS interface {
 	NewPath(path string) Path
 
+	NewURI(u URI) (Path, error)
+
 	ListRoots() []Path
 
 	CreateTempFile(prefix, suffix string, dir Path) (Path, error)

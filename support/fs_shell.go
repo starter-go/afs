@@ -14,9 +14,19 @@ func (inst *myShellFS) _Impl() afs.FS {
 	return inst
 }
 
+// shell -> platform -> common
 func (inst *myShellFS) NewPath(path string) afs.Path {
-	p2, _ := inst.context.platform.NormalizePath(path)
-	return &myCommonPath{context: inst.context, path: p2}
+	return inst.context.platform.New(path)
+}
+
+func (inst *myShellFS) NewURI(u afs.URI) (afs.Path, error) {
+	u2, err := u.URL()
+	if err != nil {
+		return nil, err
+	}
+	path := u2.Path
+	p2 := inst.NewPath(path)
+	return p2, nil
 }
 
 func (inst *myShellFS) ListRoots() []afs.Path {
