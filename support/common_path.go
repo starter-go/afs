@@ -55,25 +55,16 @@ func (inst *myCommonPath) String() string {
 }
 
 func (inst *myCommonPath) GetURI() afs.URI {
+	const prefix = "/"
 	path := inst.path
-	elements := inst.context.common.PathToElements(path)
-	builder := &strings.Builder{}
-	builder.WriteString("file:")
-	count := 0
-	for _, el := range elements {
-		el = strings.TrimSpace(el)
-		if el == "" {
-			continue
-		}
-		builder.WriteRune('/')
-		builder.WriteString(el)
-		count++
+	if !strings.HasPrefix(path, prefix) {
+		path = prefix + path
 	}
-	if count == 0 {
-		builder.WriteRune('/')
+	loc := &afs.Location{
+		Protocol: "file",
+		Path:     path,
 	}
-	str := builder.String()
-	return afs.URI(str)
+	return loc.URI()
 }
 
 func (inst *myCommonPath) GetName() string {

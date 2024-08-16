@@ -1,6 +1,7 @@
 package support
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/starter-go/afs"
@@ -20,11 +21,15 @@ func (inst *myShellFS) NewPath(path string) afs.Path {
 }
 
 func (inst *myShellFS) NewURI(u afs.URI) (afs.Path, error) {
-	u2, err := u.URL()
+	loc, err := afs.ParseLocation(u)
 	if err != nil {
 		return nil, err
 	}
-	path := u2.Path
+	if loc.Protocol != "file" {
+		str := u.String()
+		return nil, fmt.Errorf("url.schema is not 'file', url = [%s]", str)
+	}
+	path := loc.Path
 	p2 := inst.NewPath(path)
 	return p2, nil
 }
