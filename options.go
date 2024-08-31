@@ -21,39 +21,40 @@ type Options struct {
 
 // ToMakeDir ...
 func ToMakeDir() *Options {
-	opt := new(Options)
-	opt.Permission = fs.ModePerm
-	opt.Flag = 0
-	return opt
+	f := DefaultOptionsBuilderFactory()
+	b := f.NewBuilder()
+	b.CreateDir()
+	return b.Options()
 }
 
 // ToReadFile ...
 func ToReadFile() *Options {
-	opt := new(Options)
-	opt.Permission = fs.ModePerm
-	opt.Flag = os.O_RDONLY
-	return opt
+	f := DefaultOptionsBuilderFactory()
+	b := f.NewBuilder()
+	b.ReadFile()
+	return b.Options()
 }
 
 // ToWriteFile ...
 func ToWriteFile() *Options {
-	opt := new(Options)
-	opt.Permission = fs.ModePerm
-	opt.Flag = os.O_WRONLY | os.O_TRUNC
-	return opt
+	f := DefaultOptionsBuilderFactory()
+	b := f.NewBuilder()
+	b.WriteFile()
+	return b.Options()
 }
 
 // ToCreateFile ...
 func ToCreateFile() *Options {
-	opt := new(Options)
-	opt.Permission = fs.ModePerm
-	opt.Flag = os.O_WRONLY | os.O_TRUNC | os.O_CREATE
-	return opt
+	f := DefaultOptionsBuilderFactory()
+	b := f.NewBuilder()
+	b.CreateFile()
+	return b.Options()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // OptionsBuilder 用于创建复合的 Options
+// [已废弃]：用 OptionsBuilderV2 代替
 type OptionsBuilder struct {
 	mkdirs      bool
 	create      bool
@@ -159,7 +160,131 @@ func (inst *OptionsBuilder) Options() *Options {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// OptionsBuilderV2 是第二版的 Options-Builder 接口
+type OptionsBuilderV2 interface {
+	SetMode(mode fs.FileMode) OptionsBuilderV2
+	SetFlag(flag int) OptionsBuilderV2
+
+	CreateDir() OptionsBuilderV2
+	ReadDir() OptionsBuilderV2
+
+	CreateFile() OptionsBuilderV2
+	ReadFile() OptionsBuilderV2
+	WriteFile() OptionsBuilderV2
+	Append() OptionsBuilderV2
+	Truncate() OptionsBuilderV2
+
+	Options() *Options
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// OptionsBuilderFactory 用于创建 OptionsBuilderV2
+type OptionsBuilderFactory interface {
+	NewBuilder() OptionsBuilderV2
+}
+
+var theDefaultOptionsBuilderFactory OptionsBuilderFactory
+
+// DefaultOptionsBuilderFactory 用于获取默认的 OptionsBuilderFactory
+func DefaultOptionsBuilderFactory() OptionsBuilderFactory {
+	f := theDefaultOptionsBuilderFactory
+	if f == nil {
+		f = new(myDefaultOptionsBuilderFactory)
+		theDefaultOptionsBuilderFactory = f
+	}
+	return f
+}
+
+// SetDefaultOptionsBuilderFactory 用于设置默认的 OptionsBuilderFactory
+func SetDefaultOptionsBuilderFactory(f OptionsBuilderFactory) {
+	if f == nil {
+		return
+	}
+	theDefaultOptionsBuilderFactory = f
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Todo 新建一个 OptionsBuilder 对象
 func Todo() *OptionsBuilder {
 	return new(OptionsBuilder)
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+type myDefaultOptionsBuilderFactory struct {
+}
+
+func (inst *myDefaultOptionsBuilderFactory) _impl() OptionsBuilderFactory {
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilderFactory) NewBuilder() OptionsBuilderV2 {
+	b := &myDefaultOptionsBuilder{}
+	b.opt.Permission = fs.ModePerm
+	return b
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type myDefaultOptionsBuilder struct {
+	opt Options
+}
+
+func (inst *myDefaultOptionsBuilder) _impl() OptionsBuilderV2 {
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) SetMode(mode fs.FileMode) OptionsBuilderV2 {
+	inst.opt.Permission = mode
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) SetFlag(flag int) OptionsBuilderV2 {
+	inst.opt.Flag = flag
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) CreateDir() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_CREATE | os.O_WRONLY
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) ReadDir() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_RDONLY
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) CreateFile() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_CREATE | os.O_WRONLY
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) ReadFile() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_RDONLY
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) WriteFile() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_RDWR
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) Append() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_APPEND
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) Truncate() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_TRUNC
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) Options() *Options {
+	dst := new(Options)
+	*dst = inst.opt
+	return dst
+}
+
+////////////////////////////////////////////////////////////////////////////////
