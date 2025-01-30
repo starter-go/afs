@@ -23,7 +23,7 @@ type Options struct {
 func ToMakeDir() *Options {
 	f := DefaultOptionsBuilderFactory()
 	b := f.NewBuilder()
-	b.CreateDir()
+	b.Create()
 	return b.Options()
 }
 
@@ -31,7 +31,7 @@ func ToMakeDir() *Options {
 func ToReadFile() *Options {
 	f := DefaultOptionsBuilderFactory()
 	b := f.NewBuilder()
-	b.ReadFile()
+	b.ReadOnly()
 	return b.Options()
 }
 
@@ -39,7 +39,7 @@ func ToReadFile() *Options {
 func ToWriteFile() *Options {
 	f := DefaultOptionsBuilderFactory()
 	b := f.NewBuilder()
-	b.WriteFile()
+	b.WriteOnly()
 	return b.Options()
 }
 
@@ -47,7 +47,7 @@ func ToWriteFile() *Options {
 func ToCreateFile() *Options {
 	f := DefaultOptionsBuilderFactory()
 	b := f.NewBuilder()
-	b.CreateFile()
+	b.Create()
 	return b.Options()
 }
 
@@ -165,14 +165,17 @@ type OptionsBuilderV2 interface {
 	SetMode(mode fs.FileMode) OptionsBuilderV2
 	SetFlag(flag int) OptionsBuilderV2
 
-	CreateDir() OptionsBuilderV2
-	ReadDir() OptionsBuilderV2
+	//	CreateDir() OptionsBuilderV2
+	//	ReadDir() OptionsBuilderV2
 
-	CreateFile() OptionsBuilderV2
-	ReadFile() OptionsBuilderV2
-	WriteFile() OptionsBuilderV2
+	Create() OptionsBuilderV2
+	ReadOnly() OptionsBuilderV2
+	WriteOnly() OptionsBuilderV2
+	ReadWrite() OptionsBuilderV2
 	Append() OptionsBuilderV2
 	Truncate() OptionsBuilderV2
+	Excl() OptionsBuilderV2
+	Synchronous() OptionsBuilderV2
 
 	Options() *Options
 }
@@ -246,27 +249,22 @@ func (inst *myDefaultOptionsBuilder) SetFlag(flag int) OptionsBuilderV2 {
 	return inst
 }
 
-func (inst *myDefaultOptionsBuilder) CreateDir() OptionsBuilderV2 {
-	inst.opt.Flag |= os.O_CREATE | os.O_WRONLY
+func (inst *myDefaultOptionsBuilder) Create() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_CREATE
 	return inst
 }
 
-func (inst *myDefaultOptionsBuilder) ReadDir() OptionsBuilderV2 {
+func (inst *myDefaultOptionsBuilder) ReadOnly() OptionsBuilderV2 {
 	inst.opt.Flag |= os.O_RDONLY
 	return inst
 }
 
-func (inst *myDefaultOptionsBuilder) CreateFile() OptionsBuilderV2 {
-	inst.opt.Flag |= os.O_CREATE | os.O_WRONLY
+func (inst *myDefaultOptionsBuilder) WriteOnly() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_WRONLY
 	return inst
 }
 
-func (inst *myDefaultOptionsBuilder) ReadFile() OptionsBuilderV2 {
-	inst.opt.Flag |= os.O_RDONLY
-	return inst
-}
-
-func (inst *myDefaultOptionsBuilder) WriteFile() OptionsBuilderV2 {
+func (inst *myDefaultOptionsBuilder) ReadWrite() OptionsBuilderV2 {
 	inst.opt.Flag |= os.O_RDWR
 	return inst
 }
@@ -278,6 +276,16 @@ func (inst *myDefaultOptionsBuilder) Append() OptionsBuilderV2 {
 
 func (inst *myDefaultOptionsBuilder) Truncate() OptionsBuilderV2 {
 	inst.opt.Flag |= os.O_TRUNC
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) Excl() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_EXCL
+	return inst
+}
+
+func (inst *myDefaultOptionsBuilder) Synchronous() OptionsBuilderV2 {
+	inst.opt.Flag |= os.O_SYNC
 	return inst
 }
 

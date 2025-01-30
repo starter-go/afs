@@ -22,7 +22,11 @@ type Path interface {
 
 	GetURI() URI
 
+	// 获取文件（或目录）的信息，如果已有缓存就直接返回，否则就重新加载
 	GetInfo() FileInfo
+
+	// 读取文件（或目录）的信息，如果 reload==true, 则忽略缓存
+	ReadInfo(reload bool) FileInfo
 
 	String() string
 

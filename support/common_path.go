@@ -13,8 +13,9 @@ import (
 )
 
 type myCommonPath struct {
-	context *myFSContext
-	path    string
+	context        *myFSContext
+	path           string
+	cachedFileInfo afs.FileInfo
 }
 
 func (inst *myCommonPath) _Impl() afs.Path {
@@ -100,8 +101,21 @@ func (inst *myCommonPath) GetPath() string {
 }
 
 func (inst *myCommonPath) GetInfo() afs.FileInfo {
-	info := &myCommonFileInfo{context: inst.context}
-	info.load(inst)
+	return inst.ReadInfo(false)
+}
+
+func (inst *myCommonPath) ReadInfo(reload bool) afs.FileInfo {
+	info := inst.cachedFileInfo
+	if info != nil {
+		if !reload {
+			return info
+		}
+	}
+	// reload:
+	infoNew := &myCommonFileInfo{context: inst.context}
+	info = infoNew
+	infoNew.load(inst)
+	inst.cachedFileInfo = info
 	return info
 }
 

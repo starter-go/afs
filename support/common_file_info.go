@@ -32,7 +32,6 @@ func (inst *myCommonFileInfo) load(path afs.Path) error {
 	inst.err = err
 	inst.info = info
 	inst.path = path
-
 	return nil
 }
 
