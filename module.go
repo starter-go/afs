@@ -8,7 +8,7 @@ import (
 const (
 	theModuleName     = "github.com/starter-go/afs"
 	theModuleVersion  = "v0.9.13"
-	theModuleRevision = 21
+	theModuleRevision = 22
 )
 
 func NewModule() string {
